@@ -1,10 +1,15 @@
 <template>
   <div id="app">
+    <mt-header fixed :title="path">
+      <router-link to="/" slot="left" v-if="hasBack">
+        <mt-button icon="back">返回</mt-button>
+      </router-link>
+    </mt-header>
     <transition name="page-slide">
-      <router-view keep-alive></router-view>
+      <router-view keep-alive class="router-content"></router-view>
     </transition>
     <mt-tabbar v-model="path">
-      <mt-tab-item id="home" >
+      <mt-tab-item id="首页" >
         <img slot="icon" src="../src/assets/logo.png">
         首页
       </mt-tab-item>
@@ -27,9 +32,12 @@
 <script>
 export default {
   name: 'app',
-  data(){
-    return {
-      path : this.$store.state.path
+  computed:{
+    path(){
+      return this.$store.state.path;
+    },
+    hasBack(){
+      return this.$store.state.hasBack;
     }
   },
   watch:{
@@ -40,7 +48,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+@import './libs/globalSet.less';
+@import './libs/markdown.less';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -52,6 +62,15 @@ body{
 }
 .mint-tabbar{
   position: fixed;
+}
+.router-content{
+  margin: 40px 0 55px;
+}
+.mint-header{
+  background-color: #80bd01;
+}
+.mint-tabbar > .mint-tab-item.is-selected{
+  color: #80bd01;
 }
 /*.page-slide-enter-active {
   transition: all .3s ease;

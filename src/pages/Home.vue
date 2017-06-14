@@ -2,17 +2,17 @@
   <div class="feed-box">
     <mt-loadmore :top-method="loadTop" ref="loadmore">
       <ul v-infinite-scroll="loadMore"  infinite-scroll-distance="10">
-        <li class="feed-li" v-for="item in data">
+        <li class="feed-li" @click="goDetail(item.id)"  v-for="item in data" :key="item.id">
           <div class="feed-title">
             <div class="feed-label" :class="[item.top ? 'feed-label-top' : 'feed-label-other']">{{item.tab | translateTab(item.top)}}</div>
             <p>{{item.title}}</p>
           </div>
           <div class="feed-content">
-            <a href="javascript:void(0)" class="" data-xs-href="/user?id=lellansin">
+            <router-link to="/detail">
               <div class="avatar">
                 <img :src="item.author.avatar_url" alt="headImgUrl">
               </div>
-            </a>
+            </router-link>
             <div class="feed-right">
               <div class="feed-right-top">
                 <div class="feed-name">{{item.author.loginname}}</div>
@@ -48,6 +48,7 @@ export default {
   },
   created() {
     this.$http.get('https://cnodejs.org/api/v1/topics',{params: {limit: 10,page: 1}}).then(response => {
+      console.log(response.data.data);
       this.data = response.data.data;
       // success callback
     }, response => {
@@ -57,6 +58,7 @@ export default {
   methods:{
     loadTop:function(){
       this.$http.get('https://cnodejs.org/api/v1/topics',{params: {limit: 10,page: 1}}).then(response => {
+        console.log(response.data.data);
         this.data = response.data.data;
         this.$refs.loadmore.onTopLoaded();
         // success callback
@@ -67,6 +69,7 @@ export default {
     loadMore:function(){
       this.page ++ ;
       this.$http.get('https://cnodejs.org/api/v1/topics',{params: {limit: 10,page: this.page}}).then(response => {
+        console.log(response.data.data);
         for(var i in response.data.data){
           this.data.push(response.data.data[i]);
         }
@@ -74,22 +77,26 @@ export default {
       }, response => {
         // error callback
       })
+    },
+    goDetail:function(id){
+      this.$store.commit('link',{path:'详情',hasBack:true});
+      this.$router.push({ name: 'detail', query: { id: id }})
     }
   }
 }
 </script>
 <style lang="scss">
-.feed-box{
-  padding-bottom: 55px;
-}
 ul{
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
 .feed-li{
   list-style: none;
   padding: 14px;
   position: relative;
+  display: block;
+  color: #333;
+  text-decoration: none;
   &::before{
     content: " ";
     position: absolute;
