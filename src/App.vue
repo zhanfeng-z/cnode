@@ -50,6 +50,9 @@ export default {
 body{
   margin: 0;
 }
+.mint-tabbar{
+  position: fixed;
+}
 /*.page-slide-enter-active {
   transition: all .3s ease;
 }

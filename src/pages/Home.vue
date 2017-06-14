@@ -1,54 +1,87 @@
 <template>
-  <div>
-    <ul>
-      <li class="feed-li">
-        <div class="feed-title">
-          <div class="feed-label feed-label-top">置顶</div>
-          <p>饿了么大前端 Node.js 进阶教程</p>
-        </div>
-        <div class="feed-content">
-          <a href="javascript:void(0)" class="" data-xs-href="/user?id=lellansin">
-            <div class="avatar">
-              <img src="https://avatars1.githubusercontent.com/u/2081487?v=3&amp;s=120" alt="headImgUrl">
-            </div>
-          </a>
-          <div class="feed-right">
-            <div class="feed-right-top">
-              <div class="feed-name">lellansin</div>
-              <div class="feed-count">
-                <span>150</span> / 56848
+  <div class="feed-box">
+    <mt-loadmore :top-method="loadTop" ref="loadmore">
+      <ul v-infinite-scroll="loadMore"  infinite-scroll-distance="10">
+        <li class="feed-li" v-for="item in data">
+          <div class="feed-title">
+            <div class="feed-label" :class="[item.top ? 'feed-label-top' : 'feed-label-other']">{{item.tab | translateTab(item.top)}}</div>
+            <p>{{item.title}}</p>
+          </div>
+          <div class="feed-content">
+            <a href="javascript:void(0)" class="" data-xs-href="/user?id=lellansin">
+              <div class="avatar">
+                <img :src="item.author.avatar_url" alt="headImgUrl">
               </div>
-            </div>
-            <div class="feed-right-bottom">
-              <div class="feed-time">
-                创建于：
-                <span>2017-02-22 19:32:43</span>
+            </a>
+            <div class="feed-right">
+              <div class="feed-right-top">
+                <div class="feed-name">{{item.author.loginname}}</div>
+                <div class="feed-count">
+                  <span>{{item.reply_count}}</span> / {{item.visit_count}}
+                </div>
               </div>
-              <div class="feed-pass">
-                3 小时前
+              <div class="feed-right-bottom">
+                <div class="feed-time">
+                  创建于：
+                  <span>{{item.create_at | formatDate('yyyy-MM-dd hh:mm:ss')}}</span>
+                </div>
+                <div class="feed-pass">
+                  {{item.last_reply_at | timeAgo}}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </mt-loadmore>
   </div>
 </template>
 
 <script>
 export default {
   name: 'home',
+  data(){
+    return {
+      data : [],
+      page: 1
+    }
+  },
   created() {
-    this.$http.get('https://cnodejs.org/api/v1/topics').then(response => {
-      console.log(response)
+    this.$http.get('https://cnodejs.org/api/v1/topics',{params: {limit: 10,page: 1}}).then(response => {
+      this.data = response.data.data;
       // success callback
     }, response => {
       // error callback
     })
+  },
+  methods:{
+    loadTop:function(){
+      this.$http.get('https://cnodejs.org/api/v1/topics',{params: {limit: 10,page: 1}}).then(response => {
+        this.data = response.data.data;
+        this.$refs.loadmore.onTopLoaded();
+        // success callback
+      }, response => {
+        // error callback
+      })
+    },
+    loadMore:function(){
+      this.page ++ ;
+      this.$http.get('https://cnodejs.org/api/v1/topics',{params: {limit: 10,page: this.page}}).then(response => {
+        for(var i in response.data.data){
+          this.data.push(response.data.data[i]);
+        }
+        // success callback
+      }, response => {
+        // error callback
+      })
+    }
   }
 }
 </script>
 <style lang="scss">
+.feed-box{
+  padding-bottom: 55px;
+}
 ul{
   margin: 0;
   padding: 0;

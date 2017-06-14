@@ -7,9 +7,14 @@ import 'mint-ui/lib/style.css'
 import router from './router'
 import store from './store'
 import axios from 'axios'
+import * as filters from './filters'
 Vue.prototype.$http = axios
 
 Vue.use(Mint);
+
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
 
 Vue.config.productionTip = false
 
