@@ -21,7 +21,7 @@
         <img slot="icon" src="../src/assets/logo.png">
         消息
       </mt-tab-item>
-      <mt-tab-item id="我的">
+      <mt-tab-item id="center">
         <img slot="icon" src="../src/assets/logo.png">
         我的
       </mt-tab-item>
@@ -59,6 +59,7 @@ export default {
 <style >
 @import './libs/globalSet.less';
 @import './libs/markdown.less';
+@import './libs/font-awesome.css';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

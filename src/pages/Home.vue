@@ -51,7 +51,7 @@ export default {
     this.loadTop();
   },
   updated(){
-    this.loading = false;
+    
     console.log('updated')
   },
   activated(){
@@ -68,6 +68,7 @@ export default {
         console.log('首次加载');
         console.log(response.data.data);
         this.data = response.data.data;
+        this.loading = false;
         this.$refs.loadmore.onTopLoaded();
         // success callback
       }, response => {

@@ -183,6 +183,31 @@ export default {
   background-color: #80bd01;
   color: #fff
 }
+.icon-reply{
+  margin-left: 10px;
+}
+.comment-right span{
+  margin-left: 2px;
+  position: relative;
+  top: -2px;
+}
+.comment-middle-bottom span{
+  color: #80bd01;
+}
+.comment-title:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px solid #bcbab6;
+    color: #bcbab6;
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+}
 
 </style>
 
