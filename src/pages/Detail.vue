@@ -9,7 +9,7 @@
         </div>
         <div class="head-middle">
           <div class="head-middle-top">
-            <div class="feed-label" :class="[article.top ? 'feed-label-top' : `feed-label-other`]">
+            <div class="feed-label" :class="[article.top ? 'feed-label-top' : 'feed-label-other']">
               {{article.tab | translateTab(article.top)}}
             </div>
             <span class="head-author-name" v-text="author.loginname"></span>
@@ -26,6 +26,37 @@
       </div>
     </div>
     <div class="content-box markdown-body" v-html="article.content"></div>
+    <div class="comment-box" v-if="article.title">
+      <div class="comment-title">
+        {{article.reply_count}} 条回复
+      </div>
+      <div class="comment-li" v-for="(c, index) in displayCommentList">
+        <div class="comment-head">
+          <router-link :to="{name: 'home'}">
+            <div class="avatar">
+              <img v-lazy="c.author.avatar_url" alt="headImgUrl">
+            </div>
+          </router-link>
+          <div class="comment-middle">
+            <div class="comment-middle-top" v-text="c.author.loginname">
+            </div>
+            <div class="comment-middle-bottom">
+              <span>{{index + 1}}楼</span> · {{c.create_at | timeAgo}}
+            </div>
+          </div>
+          <div class="comment-right">
+            <div @click="onLikeThisComment(c.id, index)" style="display: flex;"
+                 :class="{ 'active': index < 60 }">
+              <i class="icon-thumbs-up"></i>
+              <span v-text="c.ups.length"></span>
+            </div>
+            <i class="icon-reply" @click="onReplyComment(c.id, c.author.loginname, index)"></i>
+          </div>
+        </div>
+        <div class="comment-content markdown-body" v-html="c.content">
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -35,7 +66,8 @@ export default {
   data() {
     return {
       article: {},
-      author: {}
+      author: {},
+      displayCommentList:[]
     }
   },
   created() {
@@ -52,6 +84,7 @@ export default {
       console.log(response);
       this.article = response.data.data;
       this.author = response.data.data.author;
+      this.displayCommentList = response.data.data.replies;
       this.$indicator.close();
       // success callback
     }, response => {
