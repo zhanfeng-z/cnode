@@ -11,17 +11,20 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      mate: { keepAlive: true }
     },
     {
       path: '/message',
       name: 'message',
-      component: Message
+      component: Message,
+      mate: { keepAlive: false }
     },
     {
       path: '/detail',
       name: 'detail',
-      component: Detail
+      component: Detail,
+      mate: { keepAlive: true }
     }
   ]
 })

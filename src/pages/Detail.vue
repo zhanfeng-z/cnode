@@ -1,6 +1,6 @@
 <template>
   <div class="article-box">
-    <div class="head-box">
+    <div class="head-box" v-if="article.title">
       <h2 class="head-title" v-text="article.title">
       </h2>
       <div class="head-intro">
@@ -39,11 +39,20 @@ export default {
     }
   },
   created() {
+    this.$store.commit('SET_SHOWTABBAR',false);
+    this.$store.commit('SET_PATH',{headTitle:'详情',hasBack:true});
+    this.$indicator.open({
+      text: '加载中...',
+      spinnerType: 'fading-circle'
+    });
+  },
+  mounted(){
     let id = this.$route.query.id;
     this.$http.get('https://cnodejs.org/api/v1/topic/' + id).then(response => {
       console.log(response);
       this.article = response.data.data;
       this.author = response.data.data.author;
+      this.$indicator.close();
       // success callback
     }, response => {
       // error callback

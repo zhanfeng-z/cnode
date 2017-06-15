@@ -1,15 +1,15 @@
 <template>
   <div id="app">
-    <mt-header fixed :title="path">
-      <router-link to="/" slot="left" v-if="hasBack">
-        <mt-button icon="back">返回</mt-button>
-      </router-link>
+    <mt-header fixed :title="headTitle">
+      <mt-button icon="back" @click="$router.go(-1)" slot="left" v-if="hasBack"></mt-button>
     </mt-header>
     <transition name="page-slide">
-      <router-view keep-alive class="router-content"></router-view>
+      <keep-alive include="home">
+        <router-view class="router-content"></router-view>
+      </keep-alive>
     </transition>
-    <mt-tabbar v-model="path">
-      <mt-tab-item id="首页" >
+    <mt-tabbar v-model="path" v-if="showTabbar">
+      <mt-tab-item id="home" >
         <img slot="icon" src="../src/assets/logo.png">
         首页
       </mt-tab-item>
@@ -32,9 +32,17 @@
 <script>
 export default {
   name: 'app',
+  data(){
+    return{
+      path:'home'
+    }
+  },
   computed:{
-    path(){
-      return this.$store.state.path;
+    showTabbar(){
+      return this.$store.state.showTabbar;
+    },
+    headTitle(){
+      return this.$store.state.headTitle;
     },
     hasBack(){
       return this.$store.state.hasBack;
@@ -48,7 +56,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style >
 @import './libs/globalSet.less';
 @import './libs/markdown.less';
 #app {

@@ -3,17 +3,21 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
-    path: '首页',
-    hasBack: false
+    showTabbar:true,
+    headTitle: '',
+    hasBack: ''
   },
   actions: {  
 
   },
   mutations: {
-   link (state,payload) {
-     console.log(state);
-      state.path = payload.path;
-      state.hasBack = payload.hasBack;
+    SET_SHOWTABBAR:(state,bool) => {
+      state.showTabbar = bool;
+    },
+    SET_PATH:(state,data) => {
+      state.headTitle = data.headTitle;
+      state.hasBack = data.hasBack;
+      console.log(data);
     }
   },
   getters: {

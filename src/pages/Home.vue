@@ -1,7 +1,7 @@
 <template>
   <div class="feed-box">
     <mt-loadmore :top-method="loadTop" ref="loadmore">
-      <ul v-infinite-scroll="loadMore"  infinite-scroll-distance="10">
+      <ul v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
         <li class="feed-li" @click="goDetail(item.id)"  v-for="item in data" :key="item.id">
           <div class="feed-title">
             <div class="feed-label" :class="[item.top ? 'feed-label-top' : 'feed-label-other']">{{item.tab | translateTab(item.top)}}</div>
@@ -43,21 +43,29 @@ export default {
   data(){
     return {
       data : [],
-      page: 1
+      page: 1,
+      loading: true
     }
   },
-  created() {
-    this.$http.get('https://cnodejs.org/api/v1/topics',{params: {limit: 10,page: 1}}).then(response => {
-      console.log(response.data.data);
-      this.data = response.data.data;
-      // success callback
-    }, response => {
-      // error callback
-    })
+  mounted() {
+    this.loadTop();
+  },
+  updated(){
+    this.loading = false;
+    console.log('updated')
+  },
+  activated(){
+    this.$store.commit('SET_SHOWTABBAR',true);
+    this.$store.commit('SET_PATH',{headTitle:'首页',hasBack:false})
+    this.loading = false;
+  },
+  deactivated(){
+    this.loading = true;
   },
   methods:{
     loadTop:function(){
       this.$http.get('https://cnodejs.org/api/v1/topics',{params: {limit: 10,page: 1}}).then(response => {
+        console.log('首次加载');
         console.log(response.data.data);
         this.data = response.data.data;
         this.$refs.loadmore.onTopLoaded();
@@ -68,18 +76,21 @@ export default {
     },
     loadMore:function(){
       this.page ++ ;
+      this.loading = true;
       this.$http.get('https://cnodejs.org/api/v1/topics',{params: {limit: 10,page: this.page}}).then(response => {
+        console.log('加载更多');
         console.log(response.data.data);
         for(var i in response.data.data){
           this.data.push(response.data.data[i]);
         }
+        this.loading = false;
         // success callback
       }, response => {
         // error callback
       })
     },
     goDetail:function(id){
-      this.$store.commit('link',{path:'详情',hasBack:true});
+      // this.$store.commit('link',{path:'详情',hasBack:true});
       this.$router.push({ name: 'detail', query: { id: id }})
     }
   }
