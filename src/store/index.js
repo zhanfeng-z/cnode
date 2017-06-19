@@ -5,7 +5,11 @@ const store = new Vuex.Store({
   state: {
     showTabbar:true,
     headTitle: '',
-    hasBack: ''
+    hasBack: '',
+    accessToken:'',
+    avatarUrl:'',
+    loginname:'',
+    id:''
   },
   actions: {  
 
@@ -17,7 +21,12 @@ const store = new Vuex.Store({
     SET_PATH:(state,data) => {
       state.headTitle = data.headTitle;
       state.hasBack = data.hasBack;
-      console.log(data);
+    },
+    SET_LOGININFO:(state,data) => {
+      state.avatarUrl = data.avatarUrl;
+      state.loginname = data.loginname;
+      state.accessToken = data.accessToken;
+      state.id = data.id;
     }
   },
   getters: {

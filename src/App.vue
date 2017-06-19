@@ -4,26 +4,26 @@
       <mt-button icon="back" @click="$router.go(-1)" slot="left" v-if="hasBack"></mt-button>
     </mt-header>
     <transition name="page-slide">
-      <keep-alive include="home">
+      <keep-alive include="home,user">
         <router-view class="router-content"></router-view>
       </keep-alive>
     </transition>
     <mt-tabbar v-model="path" v-if="showTabbar">
       <mt-tab-item id="home" >
-        <img slot="icon" src="../src/assets/logo.png">
+        <i slot="icon" class="icon-bookmark"></i>
         首页
       </mt-tab-item>
       <mt-tab-item id="订单">
-        <img slot="icon" src="../src/assets/logo.png">
+        <i slot="icon" class="icon-edit"></i>
         发布
       </mt-tab-item>
       <mt-tab-item id="message">
-        <img slot="icon" src="../src/assets/logo.png">
+        <i slot="icon" class="icon-envelope-alt"></i>
         消息
       </mt-tab-item>
-      <mt-tab-item id="center">
-        <img slot="icon" src="../src/assets/logo.png">
-        我的
+      <mt-tab-item id="user">
+        <i slot="icon" class="icon-reorder"></i>
+        我
       </mt-tab-item>
     </mt-tabbar>
   </div>
@@ -81,6 +81,13 @@ body{
 }
 .mint-tabbar > .mint-tab-item.is-selected{
   color: #80bd01;
+}
+.mint-tab-item-icon{
+  font-size: 16px;
+}
+a{
+  text-decoration: none;
+  color: #333;
 }
 /*.page-slide-enter-active {
   transition: all .3s ease;
