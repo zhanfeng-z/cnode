@@ -1,6 +1,6 @@
 <template>
-  <div class="user-component">
-    <div v-if="avatar_url!=''">
+  <div>
+    <div v-if="avatar_url == ''">
       <div class="login-logo">
         <img src="https://cnodejs.org/public/images/cnodejs.svg" alt="">
       </div>
@@ -16,56 +16,104 @@
     <div class="user-box" v-else='avatar_url'>
       <div class="user-head-box">
         <div class="big-avatar">
-          <img v-lazy="userInfo.avatar_url" alt="">
+          <img v-lazy="avatar_url" alt="">
         </div>
         <div class="user-head-title">
-          <div class="user-head-name" v-text="userInfo.loginname"></div>
+          <div class="user-head-name" v-text="loginname"></div>
           <div class="user-head-link">
-            <a :href="`https://github.com/${userInfo.githubUsername}`">{{userInfo.githubUsername}}@github.com</a>
+            <a :href="'https://github.com/${userInfo.githubUsername}'">{{githubUsername}}@github.com</a>
           </div>
         </div>
         <div class="user-head-intro">
-          注册时间：{{userInfo.create_at | timeAgo}}
-          <span>积分：{{userInfo.score}}</span>
+          注册时间：{{create_at | timeAgo}}
+          <span>积分：{{score}}</span>
         </div>
       </div>
+      <mt-navbar v-model="active">
+        <mt-tab-item id="tab-container1">最近回复</mt-tab-item>
+        <mt-tab-item id="tab-container2">最新发布</mt-tab-item>
+        <mt-tab-item id="tab-container3">话题收藏</mt-tab-item>
+      </mt-navbar>
       <mt-tab-container v-model="active">
-        <mt-tab-container-item id="tab-container1">
-          <mt-cell v-for="n in 10" title="最近回复"></mt-cell>
+        <mt-tab-container-item id="tab-container1" class="feed-box">
+          <div v-for="i in recent_replies" :key="i.id" class="feed-li">
+            <router-link :to="{name: 'detail', query: { id: i.id }}">
+              <div class="feed-content">
+                <div class="avatar">
+                  <img v-lazy="i.author.avatar_url" alt="headImgUrl">
+                </div>
+                <div class="feed-right">
+                  <div class="feed-right-top">
+                    <div class="feed-title">
+                      <p v-text="i.title"></p>
+                    </div>
+                  </div>
+                  <div class="feed-right-bottom">
+                    <div class="feed-time">
+                      <span>{{i.author.loginname}}</span>
+                    </div>
+                    <div class="feed-pass">
+                      {{i.last_reply_at | timeAgo}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </router-link>
+          </div>
         </mt-tab-container-item>
         <mt-tab-container-item id="tab-container2">
-          <mt-cell v-for="n in 5" title="最新发布"></mt-cell>
+          <div v-for="i in recent_topics" :key="i.id" class="feed-li">
+            <router-link :to="{name: 'detail', query: { id: i.id }}">
+              <div class="feed-content">
+                <div class="avatar">
+                  <img v-lazy="i.author.avatar_url" alt="headImgUrl">
+                </div>
+                <div class="feed-right">
+                  <div class="feed-right-top">
+                    <div class="feed-title">
+                      <p v-text="i.title"></p>
+                    </div>
+                  </div>
+                  <div class="feed-right-bottom">
+                    <div class="feed-time">
+                      <span>{{i.author.loginname}}</span>
+                    </div>
+                    <div class="feed-pass">
+                      {{i.last_reply_at | timeAgo}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </router-link>
+          </div>
         </mt-tab-container-item>
         <mt-tab-container-item id="tab-container3">
-          <mt-cell v-for="n in 7" title="话题收藏"></mt-cell>
+          <div v-for="i in topic_collect" :key="i.id" class="feed-li">
+            <router-link :to="{name: 'detail', query: { id: i.id }}">
+              <div class="feed-content">
+                <div class="avatar">
+                  <img v-lazy="i.author.avatar_url" alt="headImgUrl">
+                </div>
+                <div class="feed-right">
+                  <div class="feed-right-top">
+                    <div class="feed-title">
+                      <p v-text="i.title"></p>
+                    </div>
+                  </div>
+                  <div class="feed-right-bottom">
+                    <div class="feed-time">
+                      <span>{{i.author.loginname}}</span>
+                    </div>
+                    <div class="feed-pass">
+                      {{i.last_reply_at | timeAgo}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </router-link>
+          </div>
         </mt-tab-container-item>
       </mt-tab-container>
-      <div class="feed-box">
-        <div v-for="i in displayList" class="feed-li">
-          <router-link :to="{name: 'detail', query: { id: i.id }}">
-            <div class="feed-content">
-              <div class="avatar">
-                <img v-lazy="i.author.avatar_url" alt="headImgUrl">
-              </div>
-              <div class="feed-right">
-                <div class="feed-right-top">
-                  <div class="feed-title">
-                    <p v-text="i.title"></p>
-                  </div>
-                </div>
-                <div class="feed-right-bottom">
-                  <div class="feed-time">
-                    <span>{{i.author.loginname}}</span>
-                  </div>
-                  <div class="feed-pass">
-                    {{i.last_reply_at | timeAgo}}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </router-link>
-        </div>
-      </div>
       <div class="ext-btn-reply btn-logout" @click="onLogout" :class="{'hide': !isShowBtnLogout}">
         注销
       </div>
@@ -79,17 +127,40 @@ export default {
   data(){
     return{
       accessToken:'f24da430-fbcd-4710-880c-f53bb289924f',
-      avatar_url:this.$store.state.avatar_url,
-      loginname:this.$store.state.loginname,
       userInfo:{},
       displayList:[],
       isShowBtnLogout:false,
-      active:'tab-container1'
+      active:'tab-container1',
+      topic_collect:[],
+      create_at:'',
+      score:'',
+      githubUsername:''
+    }
+  },
+  computed:{
+    avatar_url(){
+      return this.$store.state.userInfo.avatarUrl
+    },
+    loginname(){
+      return this.$store.state.userInfo.loginname
+    },
+    recent_topics(){
+      return this.$store.state.userInfo.recent_topics
+    },
+    recent_replies(){
+      return this.$store.state.userInfo.recent_replies
     }
   },
   activated(){
     this.$store.commit('SET_SHOWTABBAR',true);
     this.$store.commit('SET_PATH',{headTitle:'我',hasBack:false})
+  },
+  watch:{
+    active:function(){
+      if(this.active == 'tab-container3'){
+        this.getCollect();
+      }
+    }
   },
   methods:{
     onLogin(){
@@ -103,30 +174,48 @@ export default {
       } else {
         this.$http.post(' https://cnodejs.org/api/v1/accesstoken', {
           accesstoken: this.accessToken
-        })
-          .then(result => {
-            console.log(result)
-            localStorage.setItem('accessToken', this.accessToken)
-            this.$store.commit('SET_LOGININFO', {
-              avatarUrl: result.data.avatar_url,
-              id: result.data.id,
-              loginname: result.data.loginname,
-              accessToken: this.accessToken
+        }).then(result => {
+          console.log(result)
+          localStorage.setItem('accessToken', this.accessToken)
+          this.$store.commit('SET_LOGININFO', {
+            avatarUrl: result.data.avatar_url,
+            id: result.data.id,
+            loginname: result.data.loginname,
+            accessToken: this.accessToken
+          })
+          this.$toast({
+            message: '登录成功',
+              position: 'bottom',
+            duration: 3000
+          });
+          return result.data.loginname;
+        }).then(
+          loginname => {
+            this.$http.get('https://cnodejs.org/api/v1/user/'+loginname+'').then(result => {
+              console.log(result);
+              this.$store.commit('SET_REPLIES', {
+                recent_replies: result.data.data.recent_replies,
+                recent_topics: result.data.data.recent_topics,
+              })
+              this.create_at = result.data.data.create_at;
+              this.score = result.data.data.score;
+              this.githubUsername = result.data.data.githubUsername;
             })
-            this.$toast({
-              message: '登录成功',
-               position: 'bottom',
-              duration: 3000
-            });
-          })
-          .catch(() => {
-            this.$toast({
-              message: 'AccessToken错误',
-               position: 'bottom',
-              duration: 3000
-            });
-          })
+          }
+        ).catch(() => {
+          this.$toast({
+            message: 'AccessToken错误',
+            position: 'bottom',
+            duration: 3000
+          });
+        })
       }
+    },
+    getCollect(){
+      this.$http.get('https://cnodejs.org/api/v1/topic_collect/'+this.loginname+'').then(result => {
+        console.log(result);
+        this.topic_collect = result.data.data;
+      })
     },
     onLogout(){
 
@@ -158,6 +247,38 @@ export default {
   .mint-button--primary{
     background-color: #04be02;
   }
+}
+.user-head-box{
+  background: url('../assets/head_bg.jpg') 50%;
+  background-size: cover;
+}
+.user-head-link a{
+  color: #ddd;
+}
+.feed-title p{
+  margin: 0;
+}
+.mint-navbar{
+  position: relative;
+  &::before{
+    content: " ";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 100%;
+    height: 1px;
+    border-bottom: 1px solid #bcbab6;
+    color: #bcbab6;
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
+  }
+}
+.mint-navbar .mint-tab-item.is-selected{
+  border-bottom: 3px solid #80bd01;
+  color: #80bd01;
+  margin-bottom: -3px;
 }
 </style>
 

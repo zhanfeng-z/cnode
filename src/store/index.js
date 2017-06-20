@@ -6,10 +6,14 @@ const store = new Vuex.Store({
     showTabbar:true,
     headTitle: '',
     hasBack: '',
-    accessToken:'',
-    avatarUrl:'',
-    loginname:'',
-    id:''
+    userInfo:{
+      accessToken:'',
+      avatarUrl:'',
+      loginname:'',
+      id:'',
+      recent_replies:[],
+      recent_topics:[]
+    },
   },
   actions: {  
 
@@ -23,10 +27,14 @@ const store = new Vuex.Store({
       state.hasBack = data.hasBack;
     },
     SET_LOGININFO:(state,data) => {
-      state.avatarUrl = data.avatarUrl;
-      state.loginname = data.loginname;
-      state.accessToken = data.accessToken;
-      state.id = data.id;
+      state.userInfo.avatarUrl = data.avatarUrl;
+      state.userInfo.loginname = data.loginname;
+      state.userInfo.accessToken = data.accessToken;
+      state.userInfo.id = data.id;
+    },
+    SET_REPLIES:(state,data) => {
+      state.userInfo.recent_replies = data.recent_replies;
+      state.userInfo.recent_topics = data.recent_topics;
     }
   },
   getters: {

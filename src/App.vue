@@ -61,7 +61,7 @@ export default {
 @import './libs/markdown.less';
 @import './libs/font-awesome.css';
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,SimSun,sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
@@ -77,7 +77,7 @@ body{
   margin: 40px 0 55px;
 }
 .mint-header{
-  background-color: #80bd01;
+  background-color: #282828;
 }
 .mint-tabbar > .mint-tab-item.is-selected{
   color: #80bd01;
