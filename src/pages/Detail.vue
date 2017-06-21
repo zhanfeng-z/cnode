@@ -45,8 +45,7 @@
             </div>
           </div>
           <div class="comment-right">
-            <div @click="onLikeThisComment(c.id, index)" style="display: flex;"
-                 :class="{ 'active': index < 60 }">
+            <div @click="onLikeThisComment(c.id, index)" style="display: flex;" :class="[c.is_uped ? 'active' : '']">
               <i class="icon-thumbs-up"></i>
               <span v-text="c.ups.length"></span>
             </div>
@@ -80,7 +79,11 @@ export default {
   },
   mounted(){
     let id = this.$route.query.id;
-    this.$http.get('https://cnodejs.org/api/v1/topic/' + id).then(response => {
+    this.$http.get('https://cnodejs.org/api/v1/topic/' + id,{
+      params: {
+        accesstoken:this.$store.state.userInfo.accessToken
+      }
+    }).then(response => {
       console.log(response);
       this.article = response.data.data;
       this.author = response.data.data.author;
@@ -94,8 +97,17 @@ export default {
   methods:{
     collect:function(){
       if(!!this.$store.state.userInfo.accessToken){
-        this.$http.post('https://cnodejs.org/api/v1/topic_collect/collect',{accesstoken:this.$store.state.userInfo.accessToken,topic_id:this.$route.query.id}).then(response => {
-          console.log(response);
+        let url;
+        if(!this.article.is_collect){
+          url = '/topic_collect/collect';
+        }else{
+          url = '/topic_collect/de_collect';
+        }
+        this.$http.post('https://cnodejs.org/api/v1'+url,{accesstoken:this.$store.state.userInfo.accessToken,topic_id:this.$route.query.id}).then(response => {
+          console.log(response.data);
+          if(response.data.success){
+            this.article.is_collect = !this.article.is_collect;
+          }
           // success callback
         }, response => {
           // error callback
@@ -109,8 +121,24 @@ export default {
         this.$emit('tabChange','user');
         this.$router.push({ name: 'user'})
       }
-      
     },
+    onLikeThisComment:function(id,index){
+      this.$http.post('https://cnodejs.org/api/v1/reply/'+id+'/ups',{accesstoken:this.$store.state.userInfo.accessToken}).then(response => {
+        console.log(response.data);
+        if(response.data.success){
+          if(response.data.action == 'up'){
+            this.displayCommentList[index].is_uped = !this.displayCommentList[index].is_uped;
+            this.displayCommentList[index].ups.splice(this.displayCommentList[index].ups.length,0,this.$store.state.userInfo.id);
+          }else{
+            this.displayCommentList[index].is_uped = !this.displayCommentList[index].is_uped;
+            this.displayCommentList[index].ups.splice(this.displayCommentList[index].ups.length-1,1);
+          }
+        }
+        // success callback
+      }, response => {
+        // error callback
+      })
+    }
   }
 }
 </script>
@@ -229,7 +257,9 @@ export default {
     -webkit-transform: scaleY(.5);
     transform: scaleY(.5);
 }
-
+.comment-right .active {
+    color: #80bd01;
+}
 </style>
 
 

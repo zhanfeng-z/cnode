@@ -13,7 +13,7 @@
         <i slot="icon" class="icon-bookmark"></i>
         首页
       </mt-tab-item>
-      <mt-tab-item id="订单">
+      <mt-tab-item id="create">
         <i slot="icon" class="icon-edit"></i>
         发布
       </mt-tab-item>
@@ -56,6 +56,20 @@ export default {
   methods:{
     tabChange:function(path){
       this.path = path;
+    }
+  },
+  created(){
+    if(location.pathname == '/'){
+      this.path = 'home';
+    }
+    if(location.pathname == '/create'){
+      this.path = 'create';
+    }
+    if(location.pathname == '/message'){
+      this.path = 'message';
+    }
+    if(location.pathname == '/user'){
+      this.path = 'user';
     }
   }
 }

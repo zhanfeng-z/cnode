@@ -126,7 +126,7 @@ export default {
   name: 'user',
   data(){
     return{
-      accessToken:'f24da430-fbcd-4710-880c-f53bb289924f',
+      accessToken:' 639a362f-c599-4c6f-b3b0-c1c36e51e08a',
       userInfo:{},
       displayList:[],
       isShowBtnLogout:false,
