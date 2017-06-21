@@ -51,7 +51,6 @@ export default {
     this.loadTop();
   },
   updated(){
-    
     console.log('updated')
   },
   activated(){

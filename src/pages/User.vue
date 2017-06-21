@@ -21,7 +21,7 @@
         <div class="user-head-title">
           <div class="user-head-name" v-text="loginname"></div>
           <div class="user-head-link">
-            <a :href="'https://github.com/${userInfo.githubUsername}'">{{githubUsername}}@github.com</a>
+            <a :href="'https://github.com/'+githubUsername">{{githubUsername}}@github.com</a>
           </div>
         </div>
         <div class="user-head-intro">
@@ -126,7 +126,7 @@ export default {
   name: 'user',
   data(){
     return{
-      accessToken:' 639a362f-c599-4c6f-b3b0-c1c36e51e08a',
+      accessToken:'639a362f-c599-4c6f-b3b0-c1c36e51e08a',
       userInfo:{},
       displayList:[],
       isShowBtnLogout:false,
