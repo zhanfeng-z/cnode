@@ -5,7 +5,7 @@
     </mt-header>
     <transition name="page-slide">
       <keep-alive include="home,user">
-        <router-view class="router-content"></router-view>
+        <router-view class="router-content" @tabChange="tabChange"></router-view>
       </keep-alive>
     </transition>
     <mt-tabbar v-model="path" v-if="showTabbar">
@@ -51,6 +51,11 @@ export default {
   watch:{
     path:function(){
       this.$router.push({name: this.path});
+    }
+  },
+  methods:{
+    tabChange:function(path){
+      this.path = path;
     }
   }
 }

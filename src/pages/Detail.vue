@@ -20,7 +20,7 @@
             <div class="icon-eye-open"></div>
           </div>
         </div>
-        <div class="head-right">
+        <div class="head-right" @click="collect">
           <i :class="[article.is_collect ? 'icon-heart' : 'icon-heart-empty']"></i>
         </div>
       </div>
@@ -90,6 +90,27 @@ export default {
     }, response => {
       // error callback
     })
+  },
+  methods:{
+    collect:function(){
+      if(!!this.$store.state.userInfo.accessToken){
+        this.$http.post('https://cnodejs.org/api/v1/topic_collect/collect',{accesstoken:this.$store.state.userInfo.accessToken,topic_id:this.$route.query.id}).then(response => {
+          console.log(response);
+          // success callback
+        }, response => {
+          // error callback
+        })
+      }else{
+        this.$toast({
+          message: '请先登录',
+          position: 'bottom',
+          duration: 3000
+        });
+        this.$emit('tabChange','user');
+        this.$router.push({ name: 'user'})
+      }
+      
+    },
   }
 }
 </script>
