@@ -56,6 +56,13 @@
         </div>
       </div>
     </div>
+    <div class="ext-btn-reply btn-logout" @click="onReplyComment('','',-1)">
+      回复
+    </div>
+    <mt-popup v-model="popupVisible" position="bottom">
+      <mt-field :placeholder="text" v-model="reply"></mt-field>
+      <mt-button type="default" @click="replySubmit">发送</mt-button>
+    </mt-popup>
   </div>
 </template>
 
@@ -66,7 +73,11 @@ export default {
     return {
       article: {},
       author: {},
-      displayCommentList:[]
+      displayCommentList:[],
+      popupVisible:false,
+      text:'正在回复',
+      reply:'',
+      replayId:'',
     }
   },
   created() {
@@ -138,6 +149,51 @@ export default {
       }, response => {
         // error callback
       })
+    },
+    onReplyComment:function(id,loginname,index){
+      let num = index + 1;
+      if(index < 0){
+        id = this.article.author_id;
+        loginname = this.author.loginname;
+        this.text = '正在回复作者，'+loginname;
+      }else{
+        this.text = '正在回复'+ num +'楼，' +loginname;
+      }
+      this.replayId = id;
+      this.popupVisible = true;
+    },
+    replySubmit:function(){
+      this.$http.post('https://cnodejs.org/api/v1/topic/'+ this.article.id +'/replies',{
+        accesstoken:this.$store.state.userInfo.accessToken,
+        content:this.reply,
+        reply_id: this.replayId
+      }).then(response => {
+        console.log(response.data);
+        if(response.data.success){
+          this.$toast({
+            message: '回复成功',
+            position: 'bottom',
+            duration: 3000
+          });
+        }
+        this.reply = '';
+        this.popupVisible = false;
+        return response;
+        // success callback
+      }).then(
+        (msg) => {
+          this.$http.get('https://cnodejs.org/api/v1/topic/' + this.$route.query.id,{
+            accesstoken:this.$store.state.userInfo.accessToken
+          }).then(response => {
+            console.log(response);
+            this.article = response.data.data;
+            this.author = response.data.data.author;
+            this.displayCommentList = response.data.data.replies;
+            this.$indicator.close();
+            // success callback
+          })
+        }
+      )
     }
   }
 }
@@ -261,6 +317,27 @@ export default {
     color: #80bd01;
 }
 </style>
+<style lang="scss" scoped>
+.mint-popup-bottom{
+  width: 100%;
+  display: flex;
+  .mint-cell{
+    flex-grow: 1;
+    min-height: 40px;
+  }
+  .mint-button--default{
+    background-color:#80bd01;
+    font-size: 14px; 
+    color: white;
+    padding: 0 15px;
+  }
+}
+.ext-btn-reply{
+  bottom: 20px;
+}
+
+</style>
+
 
 
 

@@ -57,6 +57,8 @@ export function translateTab (tab, isTop) {
         return '精华'
       case 'top':
         return '置顶'
+      case 'dev':
+        return '测试'
     }
   }
 }

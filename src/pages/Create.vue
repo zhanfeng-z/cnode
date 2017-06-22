@@ -37,7 +37,9 @@ export default {
         tab:this.selectType,
         content:this.content
       }).then(response => {
-        console.log(response);
+        if(response.data.success){
+          this.$router.push({ name: 'detail', query: { id: response.data.topic_id }});
+        }
       }).catch( err => {
         this.$toast({
           message: err.response.data.error_msg,

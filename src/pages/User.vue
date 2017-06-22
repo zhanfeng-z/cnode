@@ -13,110 +13,112 @@
           <mt-button type="primary" @click="onLogin">立即登录</mt-button>
       </div>
     </div>
-    <div class="user-box" v-else='avatar_url'>
-      <div class="user-head-box">
-        <div class="big-avatar">
-          <img v-lazy="avatar_url" alt="">
-        </div>
-        <div class="user-head-title">
-          <div class="user-head-name" v-text="loginname"></div>
-          <div class="user-head-link">
-            <a :href="'https://github.com/'+githubUsername">{{githubUsername}}@github.com</a>
+    <mt-loadmore :top-method="refresh"  ref="loadmore" v-else='avatar_url'>
+      <div class="user-box">
+        <div class="user-head-box">
+          <div class="big-avatar">
+            <img v-lazy="avatar_url" alt="">
+          </div>
+          <div class="user-head-title">
+            <div class="user-head-name" v-text="loginname"></div>
+            <div class="user-head-link">
+              <a :href="'https://github.com/'+githubUsername">{{githubUsername}}@github.com</a>
+            </div>
+          </div>
+          <div class="user-head-intro">
+            注册时间：{{create_at | timeAgo}}
+            <span>积分：{{score}}</span>
           </div>
         </div>
-        <div class="user-head-intro">
-          注册时间：{{create_at | timeAgo}}
-          <span>积分：{{score}}</span>
-        </div>
+        <mt-navbar v-model="active">
+          <mt-tab-item id="tab-container1">最近回复</mt-tab-item>
+          <mt-tab-item id="tab-container2">最新发布</mt-tab-item>
+          <mt-tab-item id="tab-container3">话题收藏</mt-tab-item>
+        </mt-navbar>
+        <mt-tab-container v-model="active">
+          <mt-tab-container-item id="tab-container1" class="feed-box">
+            <div v-for="i in recent_replies" :key="i.id" class="feed-li">
+              <router-link :to="{name: 'detail', query: { id: i.id }}">
+                <div class="feed-content">
+                  <div class="avatar">
+                    <img v-lazy="i.author.avatar_url" alt="headImgUrl">
+                  </div>
+                  <div class="feed-right">
+                    <div class="feed-right-top">
+                      <div class="feed-title">
+                        <p v-text="i.title"></p>
+                      </div>
+                    </div>
+                    <div class="feed-right-bottom">
+                      <div class="feed-time">
+                        <span>{{i.author.loginname}}</span>
+                      </div>
+                      <div class="feed-pass">
+                        {{i.last_reply_at | timeAgo}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </router-link>
+            </div>
+          </mt-tab-container-item>
+          <mt-tab-container-item id="tab-container2">
+            <div v-for="i in recent_topics" :key="i.id" class="feed-li">
+              <router-link :to="{name: 'detail', query: { id: i.id }}">
+                <div class="feed-content">
+                  <div class="avatar">
+                    <img v-lazy="i.author.avatar_url" alt="headImgUrl">
+                  </div>
+                  <div class="feed-right">
+                    <div class="feed-right-top">
+                      <div class="feed-title">
+                        <p v-text="i.title"></p>
+                      </div>
+                    </div>
+                    <div class="feed-right-bottom">
+                      <div class="feed-time">
+                        <span>{{i.author.loginname}}</span>
+                      </div>
+                      <div class="feed-pass">
+                        {{i.last_reply_at | timeAgo}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </router-link>
+            </div>
+          </mt-tab-container-item>
+          <mt-tab-container-item id="tab-container3">
+            <div v-for="i in topic_collect" :key="i.id" class="feed-li">
+              <router-link :to="{name: 'detail', query: { id: i.id }}">
+                <div class="feed-content">
+                  <div class="avatar">
+                    <img v-lazy="i.author.avatar_url" alt="headImgUrl">
+                  </div>
+                  <div class="feed-right">
+                    <div class="feed-right-top">
+                      <div class="feed-title">
+                        <p v-text="i.title"></p>
+                      </div>
+                    </div>
+                    <div class="feed-right-bottom">
+                      <div class="feed-time">
+                        <span>{{i.author.loginname}}</span>
+                      </div>
+                      <div class="feed-pass">
+                        {{i.last_reply_at | timeAgo}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </router-link>
+            </div>
+          </mt-tab-container-item>
+        </mt-tab-container>
       </div>
-      <mt-navbar v-model="active">
-        <mt-tab-item id="tab-container1">最近回复</mt-tab-item>
-        <mt-tab-item id="tab-container2">最新发布</mt-tab-item>
-        <mt-tab-item id="tab-container3">话题收藏</mt-tab-item>
-      </mt-navbar>
-      <mt-tab-container v-model="active">
-        <mt-tab-container-item id="tab-container1" class="feed-box">
-          <div v-for="i in recent_replies" :key="i.id" class="feed-li">
-            <router-link :to="{name: 'detail', query: { id: i.id }}">
-              <div class="feed-content">
-                <div class="avatar">
-                  <img v-lazy="i.author.avatar_url" alt="headImgUrl">
-                </div>
-                <div class="feed-right">
-                  <div class="feed-right-top">
-                    <div class="feed-title">
-                      <p v-text="i.title"></p>
-                    </div>
-                  </div>
-                  <div class="feed-right-bottom">
-                    <div class="feed-time">
-                      <span>{{i.author.loginname}}</span>
-                    </div>
-                    <div class="feed-pass">
-                      {{i.last_reply_at | timeAgo}}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </router-link>
-          </div>
-        </mt-tab-container-item>
-        <mt-tab-container-item id="tab-container2">
-          <div v-for="i in recent_topics" :key="i.id" class="feed-li">
-            <router-link :to="{name: 'detail', query: { id: i.id }}">
-              <div class="feed-content">
-                <div class="avatar">
-                  <img v-lazy="i.author.avatar_url" alt="headImgUrl">
-                </div>
-                <div class="feed-right">
-                  <div class="feed-right-top">
-                    <div class="feed-title">
-                      <p v-text="i.title"></p>
-                    </div>
-                  </div>
-                  <div class="feed-right-bottom">
-                    <div class="feed-time">
-                      <span>{{i.author.loginname}}</span>
-                    </div>
-                    <div class="feed-pass">
-                      {{i.last_reply_at | timeAgo}}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </router-link>
-          </div>
-        </mt-tab-container-item>
-        <mt-tab-container-item id="tab-container3">
-          <div v-for="i in topic_collect" :key="i.id" class="feed-li">
-            <router-link :to="{name: 'detail', query: { id: i.id }}">
-              <div class="feed-content">
-                <div class="avatar">
-                  <img v-lazy="i.author.avatar_url" alt="headImgUrl">
-                </div>
-                <div class="feed-right">
-                  <div class="feed-right-top">
-                    <div class="feed-title">
-                      <p v-text="i.title"></p>
-                    </div>
-                  </div>
-                  <div class="feed-right-bottom">
-                    <div class="feed-time">
-                      <span>{{i.author.loginname}}</span>
-                    </div>
-                    <div class="feed-pass">
-                      {{i.last_reply_at | timeAgo}}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </router-link>
-          </div>
-        </mt-tab-container-item>
-      </mt-tab-container>
-      <div class="ext-btn-reply btn-logout" @click="onLogout" :class="{'hide': !isShowBtnLogout}">
-        注销
-      </div>
+    </mt-loadmore>
+    <div class="ext-btn-reply btn-logout" @click="onLogout" :class="{'hide': !isShowBtnLogout}">
+          注销
     </div>
   </div>
 </template>
@@ -217,6 +219,19 @@ export default {
         this.topic_collect = result.data.data;
       })
     },
+    refresh(){
+      this.$http.get('https://cnodejs.org/api/v1/user/'+this.loginname+'').then(result => {
+        console.log(result);
+        this.$store.commit('SET_REPLIES', {
+          recent_replies: result.data.data.recent_replies,
+          recent_topics: result.data.data.recent_topics,
+        })
+        this.create_at = result.data.data.create_at;
+        this.score = result.data.data.score;
+        this.githubUsername = result.data.data.githubUsername;
+        this.$refs.loadmore.onTopLoaded();
+      })
+    },
     onLogout(){
 
     }
@@ -279,6 +294,14 @@ export default {
   border-bottom: 3px solid #80bd01;
   color: #80bd01;
   margin-bottom: -3px;
+}
+.mint-loadmore{
+  overflow: initial;
+  position: relative;
+  top: -1px;
+}
+body{
+  overflow: initial;
 }
 </style>
 
