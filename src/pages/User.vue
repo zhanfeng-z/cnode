@@ -165,7 +165,7 @@ export default {
     }
   },
   methods:{
-    onLogin(){
+    async onLogin(){
       if (!this.accessToken) {
         this.$toast({
           message: '请输入AccessToken',
@@ -174,10 +174,48 @@ export default {
         });
         return false
       } else {
-        this.$http.post(' https://cnodejs.org/api/v1/accesstoken', {
-          accesstoken: this.accessToken
-        }).then(result => {
-          console.log(result)
+        // this.$http.post(' https://cnodejs.org/api/v1/accesstoken', {
+        //   accesstoken: this.accessToken
+        // }).then(result => {
+        //   console.log(result)
+        //   localStorage.setItem('accessToken', this.accessToken)
+        //   this.$store.commit('SET_LOGININFO', {
+        //     avatarUrl: result.data.avatar_url,
+        //     id: result.data.id,
+        //     loginname: result.data.loginname,
+        //     accessToken: this.accessToken
+        //   })
+        //   this.$toast({
+        //     message: '登录成功',
+        //       position: 'bottom',
+        //     duration: 3000
+        //   });
+        //   return result.data.loginname;
+        // }).then(
+        //   loginname => {
+        //     this.$http.get('https://cnodejs.org/api/v1/user/'+loginname+'').then(result => {
+        //       console.log(result);
+        //       this.$store.commit('SET_REPLIES', {
+        //         recent_replies: result.data.data.recent_replies,
+        //         recent_topics: result.data.data.recent_topics,
+        //       })
+        //       this.create_at = result.data.data.create_at;
+        //       this.score = result.data.data.score;
+        //       this.githubUsername = result.data.data.githubUsername;
+        //     })
+        //   }
+        // ).catch(() => {
+        //   this.$toast({
+        //     message: 'AccessToken错误',
+        //     position: 'bottom',
+        //     duration: 3000
+        //   });
+        // })
+        
+        try{
+          console.log('start');
+          let result = await this.login();
+          console.log(result);
           localStorage.setItem('accessToken', this.accessToken)
           this.$store.commit('SET_LOGININFO', {
             avatarUrl: result.data.avatar_url,
@@ -190,28 +228,16 @@ export default {
               position: 'bottom',
             duration: 3000
           });
-          return result.data.loginname;
-        }).then(
-          loginname => {
-            this.$http.get('https://cnodejs.org/api/v1/user/'+loginname+'').then(result => {
-              console.log(result);
-              this.$store.commit('SET_REPLIES', {
-                recent_replies: result.data.data.recent_replies,
-                recent_topics: result.data.data.recent_topics,
-              })
-              this.create_at = result.data.data.create_at;
-              this.score = result.data.data.score;
-              this.githubUsername = result.data.data.githubUsername;
-            })
-          }
-        ).catch(() => {
-          this.$toast({
-            message: 'AccessToken错误',
-            position: 'bottom',
-            duration: 3000
-          });
-        })
+
+        } catch(err) {
+          console.log(1,err);
+        }
       }
+    },
+    login(){
+      return this.$http.post(' https://cnodejs.org/api/v1/accesstoken', {
+        accesstoken: this.accessToken
+      })
     },
     getCollect(){
       this.$http.get('https://cnodejs.org/api/v1/topic_collect/'+this.loginname+'').then(result => {
