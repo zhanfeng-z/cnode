@@ -1,6 +1,6 @@
 # cnode
 
-> A Vue.js project
+> vue+vuex模拟开发的cnode社区spa版本
 
 ## Build Setup
 
